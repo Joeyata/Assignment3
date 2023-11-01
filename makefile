@@ -7,8 +7,8 @@ build:
 	javac -d $(BUILD_DIR) src/Email.java src/Acceptor.java src/Proposer.java
 
 
-launch-proposer:
+launch-acceptor:
 	java -cp src/build Acceptor $(port_number);
 
-launch-acceptor:
+launch-proposer:
 	java -cp src/build Proposer $(port_number);
