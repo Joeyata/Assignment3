@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 public class Email implements Serializable{
     private String label;
-    // prepare promise ask accept
+    // prepare promise proposal accept announce
     private int src;
     //source port
     private int promise;
@@ -14,19 +14,19 @@ public class Email implements Serializable{
     //"prepare-ok" or "NACK", valid when label = 1
     private String accept_state;
 
-    private String proposal_value;
+    private int accept_value;
     //the value of proposal_number represent
-    private String accept_value;
 
-    public Email(String l, int sr, int pro, int pn, String ps, String as, String pv, String av) {
+
+    public Email(String l, int sr, int pro, int pn, String ps, String as, int av) {
         this.label = l;
         this.src = sr;
         this.promise = pro;
         this.proposal_number = pn;
         this.promise_state = ps;
         this.accept_state = as;
-        this.proposal_value = pv;
-        this.accept_value = pv;
+
+        this.accept_value = av;
     }
     public synchronized String get_label() {
         return this.label;
@@ -46,10 +46,7 @@ public class Email implements Serializable{
     public synchronized String get_accept_state() {
         return this.accept_state;
     }
-    public synchronized String get_proposal_value() {
-        return this.proposal_value;
-    }
-    public synchronized String get_accept_value() {
+    public synchronized int get_accept_value() {
         return this.accept_value;
     }
 }
