@@ -3,6 +3,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 public class Proposer {
     public static int cnt;
@@ -32,48 +33,55 @@ public class Proposer {
         try {
 
             while (true) {
-                Socket socket = serverSocket.accept(); // 等待客户端连接
-
+                Socket socket = serverSocket.accept();
+                Random random = new Random();
+                int randomNumber = 0; // member 1 respond email immediately
+                if(member == 4112) randomNumber = random.nextInt(3000) + 2000; //member 2 very busy, respond in 2-5s
+                if(member == 4113) randomNumber = random.nextInt(3000); // member 3 normal busy, respond in 0-3s
+                Thread.sleep(randomNumber);
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Email receivedEmail = (Email) ois.readObject();
 
                 if (receivedEmail.get_label().equals("promise")) {
-                    System.out.println("receive a promise message from member " + (receivedEmail.get_src() - 4110));
+                    System.out.println("receive a promise message from member " +
+                            (receivedEmail.get_src() - 4110) + " state: " + receivedEmail.get_promise_state());
 
                     if (receivedEmail.get_promise_state().equals("prepare-ok")) {
                         promise_count++;
-                        if(promise_count <= 4 && receivedEmail.get_promise() > max_accept_received) {
-                            max_accept_received =  receivedEmail.get_promise();
-                            proposal_value = receivedEmail.get_accept_value();
+                        if(promise_count <= 4) {
+                            if(receivedEmail.get_promise() == -1) {proposal_value = cnt;System.out.println(cnt + " haha");}
+                            else {
+                                max_accept_received = Math.max(max_accept_received,receivedEmail.get_promise());
+                                proposal_value = max_accept_received;
+                            }
                         }
-                    }
-                    if (promise_count == 4) {
-                        Email proposal;
-                        if (max_accept_received == -1) {
-                            proposal_value = member - 4010;
-                            proposal = new Email("proposal", member, 0,
-                                    cnt, null, null, proposal_value);
+                        if (promise_count == 4) {
+                            Email proposal = new Email("proposal", member, 0,
+                                    proposal_value, null, null,  proposal_value);
+                            System.out.println("Send proposal value " + proposal_value + " to all acceptors");
 
-                        } else {
-                            proposal = new Email("proposal", member, 0,
-                                    max_accept_received, null, null,  proposal_value);
+                            send_proposal(4114, proposal);
+                            send_proposal(4115, proposal);
+                            send_proposal(4116, proposal);
+                            send_proposal(4117, proposal);
+                            send_proposal(4118, proposal);
+                            send_proposal(4119, proposal);
                         }
-                        System.out.println("Send proposal value " + proposal_value + " to all acceptors");
-                        send_proposal(4114, proposal);
-                        send_proposal(4115, proposal);
-                        send_proposal(4116, proposal);
-                        send_proposal(4117, proposal);
-                        send_proposal(4118, proposal);
-                        send_proposal(4119, proposal);
                     }
+
 
                 }
 
 
                 if (receivedEmail.get_label().equals("accept")) {
-                    System.out.println("receive an accept message from member " + (receivedEmail.get_src() - 4110));
+                    System.out.println("receive an accept message from member "
+                            + (receivedEmail.get_src() - 4110) + " state: " + receivedEmail.get_accept_state());
                     if (receivedEmail.get_accept_state().equals("accept")) {
                         accept_count++;
+                        if (accept_count == 4) {
+                            Email email = new Email("announce", receivedEmail.get_accept_value(),0, 0, null, null, 0);
+                            report_learner(email);
+                        }
                     }
 
                 }
@@ -83,10 +91,7 @@ public class Proposer {
                     socket.close();
                     break;
                 }
-                if (accept_count == 4) {
-                    Email email = new Email("announce", 0,0, 0, null, null, proposal_value);
-                    report_learner(email);
-                }
+
 
                 socket.close();
             }
@@ -107,7 +112,7 @@ public class Proposer {
         }
     }
 
-    public static void report_learner(Email email) // tell the learner that 'accept_value' is accepted by majority
+    public static void report_learner(Email email)
     {
         try {
             Socket acceptor = new Socket("localhost", 4120);

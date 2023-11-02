@@ -11,7 +11,7 @@ launch-learner:
 	java -cp src/build Learner;
 
 launch-acceptor:
-	java -cp src/build Acceptor $(port_number);
+	java -cp src/build Acceptor $(member);
 
 launch-proposer:
-	java -cp src/build Proposer $(port_number);
+	java -cp src/build Proposer $(member);

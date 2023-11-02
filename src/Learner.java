@@ -22,7 +22,7 @@ public class Learner{
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         ServerSocket serverSocket = new ServerSocket(4120);
         while (true) {
-            Socket socket = serverSocket.accept(); // 等待客户端连接
+            Socket socket = serverSocket.accept();
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Email receivedEmail = (Email) ois.readObject();
