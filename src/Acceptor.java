@@ -88,7 +88,7 @@ public class Acceptor {
 
     public static void main(String[] args) throws IOException {
         if(args.length < 1) {
-            System.out.println("Usage: make launch-acceptor port_number=x");
+            System.out.println("Usage: make launch-acceptor member=x");
             return ;
         }
         member = Integer.parseInt(args[0]) + 4110;

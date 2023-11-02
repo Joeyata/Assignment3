@@ -17,3 +17,6 @@ Each member own a terminal, so if you want to run 3 proposers(member 1-3) and 6 
 learner). Use random number to simulate the response late time. After launch proposer, it will propose start from number 1. The email message
 will print on terminals of each proposers and acceptors. Once the accept state of a proposer reaches 4(majority of 6), the proposer will 
 report to learner, and learner will announce the outcome and stop all process.
+
+Note: When a proposer is disconnected, it will report error in terminals of acceptors(also contrary), but it doesn't influence the paxos 
+processes, every processes will continue, until the learner announce a member is elected.

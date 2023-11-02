@@ -5,14 +5,15 @@ public class Email implements Serializable{
     private String label;
     // prepare promise proposal accept announce
     private int src;
-    //source port
+    //source port, or the winner when label = "announce"
     private int promise;
-    // include the highest previous proposal number accepted by this acceptor, only valid when label = 1.
+    // include the highest previous proposal number accepted by this acceptor
     private int proposal_number;
-    // the proposer number choose, valid when label = 0 or label = 2.
+    // the proposer number choose
     private String promise_state;
-    //"prepare-ok" or "NACK", valid when label = 1
+    //"prepare-ok" or "NACK"
     private String accept_state;
+    // "accept" "accept-reject"
 
     private int accept_value;
     //the value of proposal_number represent
@@ -25,28 +26,27 @@ public class Email implements Serializable{
         this.proposal_number = pn;
         this.promise_state = ps;
         this.accept_state = as;
-
         this.accept_value = av;
     }
-    public synchronized String get_label() {
+    public String get_label() {
         return this.label;
     }
-    public synchronized int get_src() {
+    public int get_src() {
         return this.src;
     }
-    public synchronized int get_promise() {
+    public int get_promise() {
         return this.promise;
     }
-    public synchronized int get_proposal_number() {
+    public int get_proposal_number() {
         return this.proposal_number;
     }
-    public synchronized String get_promise_state() {
+    public String get_promise_state() {
         return this.promise_state;
     }
-    public synchronized String get_accept_state() {
+    public String get_accept_state() {
         return this.accept_state;
     }
-    public synchronized int get_accept_value() {
+    public int get_accept_value() {
         return this.accept_value;
     }
 }
